@@ -31,7 +31,8 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        
+        EventManager.OnHeartBonusTook.AddListener(RefreshAllPanels);
+
     }
 
     void Start()
@@ -75,6 +76,12 @@ public class UIManager : MonoBehaviour
     {
         _currentHealth = _gameManager.CurrentHealth;
         HealthBarSmoothCoroutine = StartCoroutine(HealthBarSmoothing());
+    }
+
+    void RefreshAllPanels(int value, int health)
+    {
+        Invoke("RefreshHealthBarPanel", 0.1f);
+        Invoke("RefreshScorePanel", 0.1f);
     }
 
     IEnumerator HealthBarSmoothing ()

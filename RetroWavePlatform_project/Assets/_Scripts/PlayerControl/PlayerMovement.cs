@@ -95,38 +95,5 @@ namespace PlayerControl
 
         }
 #endif
-
     }
-
 }
-
-
-//private float runSensitivity;
-
-
-//    jumpPower = 3f; // mass = 1;
-//    runSensitivity = 2f;
-
-//public void Move(float direction, bool isJumpButtonPressed)
-//{
-//    if (isJumpButtonPressed) Jump();
-//    if (direction != 0) Run(direction);
-//    if (Mathf.Abs(direction) < 0.3f && isGrounded)
-//        rb.velocity = new Vector2(0, rb.velocity.y);
-//}
-
-//public void Run(float direction)
-//{
-//    rb.velocity = new Vector2
-//        (curve.Evaluate(direction * runSensitivity), rb.velocity.y);
-//}
-
-//public void Jump()
-//{
-//    if (isGrounded || jumpIndex == 0)
-//    {
-//        rb.velocity = new Vector2(rb.velocity.x, 0);
-//        rb.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-//        jumpIndex++;
-//    }
-//}

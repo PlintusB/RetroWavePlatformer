@@ -11,6 +11,14 @@ public class GameMainManager : MonoBehaviour
         private set { _maxPlayerHealth = value; }
     }
 
+    private void Awake()
+    {
+        CurrentHealth = _maxPlayerHealth;
+
+        EventManager.OnHeartBonusTook.AddListener(Sample);
+        EventManager.OnHeartBonusTook.AddListener(SetCurrentHealthValue);
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Backspace))
@@ -28,8 +36,15 @@ public class GameMainManager : MonoBehaviour
         set
         {
             if (value < 0) value = 0;
+            if (value > MaxPlayerHealth) value = MaxPlayerHealth;
             _currentHealth = value;
         }
+    }
+
+    void SetCurrentHealthValue(int value, int health)
+    {
+        CurrentHealth += health;
+        CurrentScore += value;
     }
 
     public float CurrentScore { get; set; }
@@ -43,9 +58,10 @@ public class GameMainManager : MonoBehaviour
     public bool IsTimerTurnedOn { get; set; }
 
 
-    private void Awake()
+
+    void Sample (int value, int health)
     {
-        CurrentHealth = _maxPlayerHealth;
+        print($"Получено {value} монет и {health} здоровья");
     }
 
     //private int gameScore;
