@@ -44,8 +44,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: EnemyLayer
+    uniqueID: 1245181801
+    locked: 0
+  - name: BonusLayer
+    uniqueID: 1229083283
+    locked: 0
   - name: PlayerLayer
     uniqueID: 768804513
+    locked: 0
+  - name: Trap Layer
+    uniqueID: 4051498255
     locked: 0
   - name: FrontLayer
     uniqueID: 182604079
