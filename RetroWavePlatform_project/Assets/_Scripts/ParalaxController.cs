@@ -13,7 +13,7 @@ public class ParalaxController : MonoBehaviour
         _layersLength = _layers.Length;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         for (int i = 0; i < _layersLength; i++)
         {

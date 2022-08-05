@@ -1,17 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
-public class GameManager : MonoBehaviour
+public class GameMainManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _levelTimerText;
-    private float _currentTimerValue;
-
-    void OnEnable()
+    [SerializeField] private float _maxPlayerHealth;
+    public float MaxPlayerHealth
     {
-        _currentTimerValue = 0;
+        get { return _maxPlayerHealth; }
+        private set { _maxPlayerHealth = value; }
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            CurrentHealth -= 20;
+            CurrentScore += 7;
+        }
+
+    }
+
+    private float _currentHealth;
+    public float CurrentHealth
+    {
+        get { return _currentHealth; }
+        set
+        {
+            if (value < 0) value = 0;
+            _currentHealth = value;
+        }
+    }
+
+    public float CurrentScore { get; set; }
+
 
     [SerializeField] private GameObject _loseGameWindow;
     [SerializeField] private GameObject _winLevelWindow;
@@ -19,6 +41,12 @@ public class GameManager : MonoBehaviour
     private int currentMinutes;
     private float currentSeconds;
     public bool IsTimerTurnedOn { get; set; }
+
+
+    private void Awake()
+    {
+        CurrentHealth = _maxPlayerHealth;
+    }
 
     //private int gameScore;
     //public int GameScore
