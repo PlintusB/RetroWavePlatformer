@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class BonusBehavior : MonoBehaviour
@@ -22,10 +23,20 @@ public class BonusBehavior : MonoBehaviour
 
     [Header("Prefubs")]
     [SerializeField] private GameObject _effectPrefub;
+    [SerializeField] private GameObject _heartPrefub;
+    [SerializeField] private GameObject _coinPrefub;
+
+    [Header("Effect Settings")]
+    [SerializeField] private RectTransform _healthImageTarget;
+    [SerializeField] private GameObject _healthBarAsParent;
+    [SerializeField] private RectTransform _coinImageTarget;
+    [SerializeField] private GameObject _scorePanelAsParent;
+
+    private Camera _mainCam;
 
     private void Awake()
     {
-
+        _mainCam = Camera.main;
     }
 
     void Start()
@@ -33,10 +44,9 @@ public class BonusBehavior : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //print(_healthBarRect.position);
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -44,38 +54,63 @@ public class BonusBehavior : MonoBehaviour
         switch (collision.tag)
         {
             case "HeartBonus":
-                EventManager.OnHeartBonusTook.Invoke(_heartBonusScores,
-                                                     _heartBonusHP);
-                Destroy(collision.gameObject);
+                Vector3 posBonusToScreen =
+                    _mainCam.WorldToScreenPoint(collision.transform.position);
+                GameObject movingHeart =
+                    Instantiate(_heartPrefub,
+                                posBonusToScreen,
+                                collision.transform.rotation,
+                                _healthBarAsParent.transform);
+                MoveHeartBonusToPanel(movingHeart);
                 break;
             case "CoinBonus":
-                EventManager.OnCoinBonusTook.Invoke(_coinBonusScores);
+                posBonusToScreen =
+                    _mainCam.WorldToScreenPoint(collision.transform.position);
+                GameObject movingCoin =
+                    Instantiate(_coinPrefub,
+                                posBonusToScreen,
+                                collision.transform.rotation,
+                                _scorePanelAsParent.transform);
+                MoveHeartBonusToPanel(movingCoin);
 
-                print("CoinBonus");
+
+
+                EventManager.OnLevelScoreChanged.Invoke(_coinBonusScores);
                 break;
             case "SpeedBonus":
-                EventManager.OnSpeedBonusTook.Invoke(_speedBonusScores,
-                                                     _speedBonusTime,
-                                                     _speedBonusDelta);
-
-                print("SpeedBonus");
+                EventManager.OnPlayerSpeedChanged.Invoke(_speedBonusTime,
+                                                         _speedBonusDelta);
+                EventManager.OnLevelScoreChanged.Invoke(_speedBonusScores);
                 break;
             case "ImmortalBonus":
-                EventManager.OnImmortalBonusTook.Invoke(_immortalBonusScores,
-                                                        _immortalBonusTime);
-
-                print("ImmortalBonus");
+                EventManager.OnImmortalStatusChanged.Invoke(_immortalBonusTime);
+                EventManager.OnLevelScoreChanged.Invoke(_immortalBonusScores);
                 break;
             default:
-                print("SOMETHING");
-                break;
+                return;
         }
 
-        GameObject effect =
-            Instantiate(_effectPrefub,
-                        collision.transform.position,
-                        transform.rotation);
+        Destroy(collision.gameObject);
+
+        GameObject effect = Instantiate(_effectPrefub,
+                                        collision.transform.position,
+                                        transform.rotation);
         Destroy(effect, 0.5f);
     }
 
+    async void MoveHeartBonusToPanel(GameObject newHeart)
+    {
+        while (true)
+        {
+            newHeart.transform.localPosition =
+            Vector2.MoveTowards(newHeart.transform.localPosition,
+                                _healthImageTarget.localPosition,
+                                Time.deltaTime * 1000);
+            await Task.Yield();
+            if (newHeart.transform.localPosition == _healthImageTarget.localPosition)
+                break;
+        }
+        EventManager.OnPlayerHealthChanged.Invoke(_heartBonusHP);
+        EventManager.OnLevelScoreChanged.Invoke(_heartBonusScores);
+    }
 }
