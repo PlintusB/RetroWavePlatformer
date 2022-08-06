@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Threading.Tasks;
 
 public class UIManager : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class UIManager : MonoBehaviour
     private float _currentHealth;
     private Coroutine HealthBarSmoothCoroutine;
     private float _healthBarSmoothVelocity;
+    //private float targetScore;
 
     private void Awake()
     {
@@ -62,14 +64,28 @@ public class UIManager : MonoBehaviour
         RefreshTimerPanel();
     }
 
-    public void RefreshScorePanel()
+    public async void RefreshScorePanel()
     {
-        _currentScore = _gameManager.CurrentScore;
-        if (_currentScore < 10) 
-            _scorePanelText.text = "00" + _currentScore.ToString();
-        else if (_currentScore < 100)
-            _scorePanelText.text = "0" + _currentScore.ToString();
-        else _scorePanelText.text = _currentScore.ToString();
+        float targetScore = _gameManager.CurrentScore;
+        if (_currentScore == targetScore) return;
+
+        while(true)
+        {
+            _currentScore++;
+            if (_currentScore < 10)
+                _scorePanelText.text = "00" + _currentScore.ToString();
+            else if (_currentScore < 100)
+                _scorePanelText.text = "0" + _currentScore.ToString();
+            else _scorePanelText.text = _currentScore.ToString();
+
+            if(_currentScore >= targetScore)
+            {
+                _currentScore = targetScore;
+                return;
+            }
+
+            await Task.Yield();
+        }
     }
 
     public void RefreshHealthBarPanel()
@@ -114,5 +130,15 @@ public class UIManager : MonoBehaviour
             ? "0" + value.ToString()
             : value.ToString();
     }
+
+    //public void RefreshScorePanel()
+    //{
+    //    _currentScore = _gameManager.CurrentScore;
+    //    if (_currentScore < 10)
+    //        _scorePanelText.text = "00" + _currentScore.ToString();
+    //    else if (_currentScore < 100)
+    //        _scorePanelText.text = "0" + _currentScore.ToString();
+    //    else _scorePanelText.text = _currentScore.ToString();
+    //}
 
 }

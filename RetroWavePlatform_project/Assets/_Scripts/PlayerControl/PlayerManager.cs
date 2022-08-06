@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace PlayerControl
@@ -8,6 +9,7 @@ namespace PlayerControl
         [SerializeField] private PlayerMovement _playerMov;
         [SerializeField] private PlayerAnimationController _playerAnim;
         [SerializeField] private GroundChecker _ground;
+        [SerializeField] private GameObject _immortalSphere;
 
 
         public int XMoveInput { get; private set; }
@@ -22,6 +24,8 @@ namespace PlayerControl
         void Awake()
         {
             // приравнять _isCanControl к аналогичному в ГеймМанагере
+            EventManager.OnImmortalStatusChanged.AddListener(GetEffectFromImmortalBonus);
+            _immortalSphere.SetActive(false);
         }
 
         void Start()
@@ -38,5 +42,13 @@ namespace PlayerControl
             VerticalVelocity = _playerMov.PlayerRb.velocity.y;
         }
 
+        private async void GetEffectFromImmortalBonus(float time)
+        {
+            gameObject.layer = 9;
+            _immortalSphere.SetActive(true);
+            await Task.Delay(Mathf.RoundToInt(time * 1000f));
+            gameObject.layer = 6;
+            _immortalSphere.SetActive(false);
+        }
     }
 }

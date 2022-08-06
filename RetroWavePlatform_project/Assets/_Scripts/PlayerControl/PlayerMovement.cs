@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace PlayerControl
@@ -6,6 +7,7 @@ namespace PlayerControl
     {
         [SerializeField] private PlayerManager _playerManager;
         [SerializeField] private float _runSpeed;
+        [SerializeField] private GameObject _speedBoostTrail;
 
         public Rigidbody2D PlayerRb { get; private set; }
         private int _jumpIndex;
@@ -19,6 +21,9 @@ namespace PlayerControl
         {
             PlayerRb = GetComponent<Rigidbody2D>();
             _jumpIndex = 0;
+
+            EventManager.OnPlayerSpeedChanged.AddListener(GetEffectFromSpeedBonus);
+            _speedBoostTrail.SetActive(false);
         }
 
         void Start()
@@ -87,6 +92,16 @@ namespace PlayerControl
                     PlayerRb.velocity.y - acceleration);
             }
         }
+
+        private async void GetEffectFromSpeedBonus(float time, float delta)
+        {
+            _runSpeed *= delta;
+            _speedBoostTrail.SetActive(true);
+            await Task.Delay(Mathf.RoundToInt(time * 1000f));
+            _runSpeed /= delta;
+            _speedBoostTrail.SetActive(false);
+        }
+
 
 #if UNITY_EDITOR
         [ContextMenu("Default Values")]

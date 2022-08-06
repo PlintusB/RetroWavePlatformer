@@ -18,6 +18,8 @@ namespace PlayerControl
             _animator.SetBool("IsGrounded", _playerMan.IsGrounded);
             _animator.SetInteger("X_move", Mathf.Abs(_playerMan.XMoveInput));
             _animator.SetFloat("Y_move", _playerMan.VerticalVelocity);
+            if (false) _animator.SetTrigger("StartHurt");
+            if (false) _animator.SetTrigger("FinishHurt");
 
             FlipX();
         }

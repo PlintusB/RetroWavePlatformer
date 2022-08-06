@@ -22,15 +22,22 @@ public class BonusBehavior : MonoBehaviour
     [SerializeField] private float _immortalBonusTime;
 
     [Header("Prefubs")]
-    [SerializeField] private GameObject _effectPrefub;
+    [SerializeField] private GameObject _takeBonusEffectPrefub;
+    [SerializeField] private GameObject _scorePanelEffectPrefub;
+    [SerializeField] private GameObject _HPPanelEffectPrefub;
     [SerializeField] private GameObject _heartPrefub;
     [SerializeField] private GameObject _coinPrefub;
 
     [Header("Effect Settings")]
+    [SerializeField] private int _heartBonusMoveSpeed;
+    [SerializeField] private int _coinBonusMoveSpeed;
     [SerializeField] private RectTransform _healthImageTarget;
     [SerializeField] private GameObject _healthBarAsParent;
     [SerializeField] private RectTransform _coinImageTarget;
     [SerializeField] private GameObject _scorePanelAsParent;
+    [SerializeField] private GameObject _scorePanelEffectPoint;
+    [SerializeField] private GameObject _HPEffectPoint;
+
 
     private Camera _mainCam;
 
@@ -71,15 +78,11 @@ public class BonusBehavior : MonoBehaviour
                                 posBonusToScreen,
                                 collision.transform.rotation,
                                 _scorePanelAsParent.transform);
-                MoveHeartBonusToPanel(movingCoin);
-
-
-
-                EventManager.OnLevelScoreChanged.Invoke(_coinBonusScores);
+                MoveCoinBonusToPanel(movingCoin);
                 break;
             case "SpeedBonus":
-                EventManager.OnPlayerSpeedChanged.Invoke(_speedBonusTime,
-                                                         _speedBonusDelta);
+                EventManager.OnPlayerSpeedChanged
+                    .Invoke(_speedBonusTime, _speedBonusDelta);
                 EventManager.OnLevelScoreChanged.Invoke(_speedBonusScores);
                 break;
             case "ImmortalBonus":
@@ -91,8 +94,7 @@ public class BonusBehavior : MonoBehaviour
         }
 
         Destroy(collision.gameObject);
-
-        GameObject effect = Instantiate(_effectPrefub,
+        GameObject effect = Instantiate(_takeBonusEffectPrefub,
                                         collision.transform.position,
                                         transform.rotation);
         Destroy(effect, 0.5f);
@@ -105,12 +107,47 @@ public class BonusBehavior : MonoBehaviour
             newHeart.transform.localPosition =
             Vector2.MoveTowards(newHeart.transform.localPosition,
                                 _healthImageTarget.localPosition,
-                                Time.deltaTime * 1000);
+                                Time.deltaTime * _heartBonusMoveSpeed);
             await Task.Yield();
             if (newHeart.transform.localPosition == _healthImageTarget.localPosition)
                 break;
         }
         EventManager.OnPlayerHealthChanged.Invoke(_heartBonusHP);
         EventManager.OnLevelScoreChanged.Invoke(_heartBonusScores);
+        Destroy(newHeart);
+        ActivateHPIncreaseEffect();
+    }
+
+    async void MoveCoinBonusToPanel(GameObject newCoin)
+    {
+        while (true)
+        {
+            newCoin.transform.localPosition =
+            Vector2.MoveTowards(newCoin.transform.localPosition,
+                                _coinImageTarget.localPosition,
+                                Time.deltaTime * _coinBonusMoveSpeed);
+            await Task.Yield();
+            if (newCoin.transform.localPosition == _coinImageTarget.localPosition)
+                break;
+        }
+        EventManager.OnLevelScoreChanged.Invoke(_coinBonusScores);
+        Destroy(newCoin);
+        ActivateScoreIncreaseEffect();
+    }
+
+    void ActivateScoreIncreaseEffect()
+    {
+        GameObject scoreEffect =
+            Instantiate(_scorePanelEffectPrefub,
+                        _scorePanelEffectPoint.transform);
+        Destroy(scoreEffect, 0.5f);
+    }
+
+    void ActivateHPIncreaseEffect()
+    {
+        GameObject healthEffect =
+            Instantiate(_HPPanelEffectPrefub,
+                        _HPEffectPoint.transform);
+        Destroy(healthEffect, 0.5f);
     }
 }
