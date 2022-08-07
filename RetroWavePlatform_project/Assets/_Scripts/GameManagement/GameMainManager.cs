@@ -8,6 +8,7 @@ public class GameMainManager : MonoBehaviour
 
     [SerializeField] private GameObject _loseGameWindow;
     [SerializeField] private GameObject _winLevelWindow;
+    [SerializeField] private GameObject _gameCanvases;
 
     [SerializeField] private float _maxPlayerHealth;
     public float MaxPlayerHealth
@@ -26,7 +27,7 @@ public class GameMainManager : MonoBehaviour
             if (value > MaxPlayerHealth) value = MaxPlayerHealth;
             _currentHealth = value;
             _UIManager.RefreshHealthBarPanel();
-            if (_currentHealth == 0) EventManager.OnPlayerDied.Invoke();
+            if (_currentHealth <= 0) EventManager.OnPlayerDied.Invoke();
         }
     }
 
@@ -44,6 +45,9 @@ public class GameMainManager : MonoBehaviour
     private void Awake()
     {
         CurrentHealth = _maxPlayerHealth;
+        _loseGameWindow.SetActive(false);
+        _winLevelWindow.SetActive(false);
+        _gameCanvases.SetActive(true);
 
         EventManager.OnLevelScoreChanged
                     .AddListener(SetLevelScoreValue);
@@ -51,6 +55,10 @@ public class GameMainManager : MonoBehaviour
                     .AddListener(IncreaseCurrentHealthValue);
         EventManager.OnDamageReceived
                     .AddListener(DecreaseCurrentHealthValue);
+        EventManager.OnLevelLoseEnded
+                    .AddListener(OpenLoseGameWindow);
+        EventManager.OnLevelWinEnded
+                    .AddListener(OpenWinLevelWindow);
     }
 
     private void Update()
@@ -62,12 +70,30 @@ public class GameMainManager : MonoBehaviour
         }
     }
 
-    void IncreaseCurrentHealthValue(int health) =>
+    private void IncreaseCurrentHealthValue(int health) =>
         CurrentHealth += health;
 
-    void SetLevelScoreValue(int value) =>
+    private void SetLevelScoreValue(int value) =>
         CurrentScore += value;
 
-    void DecreaseCurrentHealthValue(int damage, Vector2 dir) =>
+    private void DecreaseCurrentHealthValue(int damage, Vector2 dir) =>
         CurrentHealth -= damage;
+
+    private void OpenLoseGameWindow()
+    {
+        FinishedLevel();
+        _loseGameWindow.SetActive(true);
+    }
+
+    private void OpenWinLevelWindow()
+    {
+        FinishedLevel();
+        _winLevelWindow.SetActive(true);
+    }
+
+    private void FinishedLevel()
+    {
+        Time.timeScale = 0f;
+        _gameCanvases.SetActive(false);
+    }
 }

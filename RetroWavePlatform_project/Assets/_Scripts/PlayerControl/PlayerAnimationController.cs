@@ -15,11 +15,11 @@ namespace PlayerControl
             _animator = GetComponent<Animator>();
             _isHurt = false;
             EventManager.OnDamageReceived.AddListener(ReceiveDamage);
-
         }
 
         void Update()
         {
+            if (!_playerMan.IsCanControl) return;
             _animator.SetBool("IsGrounded", _playerMan.IsGrounded);
             _animator.SetInteger("X_move", Mathf.Abs(_playerMan.XMoveInput));
             _animator.SetFloat("Y_move", _playerMan.VerticalVelocity);
@@ -28,7 +28,7 @@ namespace PlayerControl
             FlipX();
         }
 
-        void FlipX()
+        private void FlipX()
         {
             if (_playerMan.XMoveInput > 0 && transform.localScale.x == -1f)
                 transform.localScale = new Vector2(1, 1);
@@ -41,6 +41,9 @@ namespace PlayerControl
             _isHurt = true;
             await Task.Delay(damage * 10);
             _isHurt = false;
+
+            if (!_playerMan.IsDead) return;
+            _animator.SetTrigger("Dead");
         }
     }
 }

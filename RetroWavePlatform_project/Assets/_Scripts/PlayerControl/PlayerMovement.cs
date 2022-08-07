@@ -45,7 +45,7 @@ namespace PlayerControl
         {
             Jump();
             CheckCoyoteTime();
-            Falling();
+            FallingAcceleration();
         }
 
         private void Run(float horizontalInput)
@@ -86,7 +86,7 @@ namespace PlayerControl
                 _currentKoyoteTime -= Time.deltaTime;
         }
 
-        private void Falling()
+        private void FallingAcceleration()
         {
             if(PlayerRb.velocity.y < -0.01)
             {

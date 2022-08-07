@@ -16,4 +16,8 @@ public static class EventManager
         new UnityEvent<int, Vector2>();
     public static UnityEvent OnPlayerDied =
         new UnityEvent();
+    public static UnityEvent OnLevelLoseEnded =
+        new UnityEvent();
+    public static UnityEvent OnLevelWinEnded =
+        new UnityEvent();
 }
