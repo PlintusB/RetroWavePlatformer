@@ -18,11 +18,12 @@ namespace PlayerControl
 
         void Update()
         {
+            _animator.SetBool("Hurt", _isHurt);
             if (!_playerMan.IsCanControl) return;
             _animator.SetBool("IsGrounded", _playerMan.IsGrounded);
             _animator.SetInteger("X_move", Mathf.Abs(_playerMan.XMoveInput));
             _animator.SetFloat("Y_move", _playerMan.VerticalVelocity);
-            _animator.SetBool("Hurt", _isHurt);
+            
 
             FlipX();
         }
