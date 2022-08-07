@@ -11,14 +11,12 @@ public class EndLevelMenuController : MonoBehaviour
     [SerializeField] private Text _totalLevelTime;
     [SerializeField] private TextMeshProUGUI _gameTimerText;
 
-
     [SerializeField] private Slider _starsSlider;
     [SerializeField] private GameObject[] _stars;
     [SerializeField] private int _scoresForTreeStars;
     private float _levelScore;
     private float _currentScoreCounter;
     private float _sliderTargetPosition;
-
 
     void OnEnable()
     {

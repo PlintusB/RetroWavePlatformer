@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -38,22 +36,11 @@ public class BonusBehavior : MonoBehaviour
     [SerializeField] private GameObject _scorePanelEffectPoint;
     [SerializeField] private GameObject _HPEffectPoint;
 
-
     private Camera _mainCam;
 
     private void Awake()
     {
         _mainCam = Camera.main;
-    }
-
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

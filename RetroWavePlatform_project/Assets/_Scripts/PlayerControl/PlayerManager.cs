@@ -20,7 +20,6 @@ namespace PlayerControl
         public bool IsCanControl { get; private set; }
         public bool IsDead { get; private set; }
 
-
         void Awake()
         {
             IsCanControl = true;
@@ -31,11 +30,6 @@ namespace PlayerControl
             EventManager.OnDamageReceived.AddListener(ImmortalStateAfterDamage);
             EventManager.OnPlayerDied.AddListener(ActivationEndLevelState);
             EventManager.OnLevelWinEnded.AddListener(ActivationEndLevelState);
-        }
-
-        void Start()
-        {
-
         }
 
         void Update()

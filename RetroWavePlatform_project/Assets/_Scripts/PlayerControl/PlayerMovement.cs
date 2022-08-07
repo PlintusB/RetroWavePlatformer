@@ -17,7 +17,6 @@ namespace PlayerControl
 
         [SerializeField] private float _jumpPower;
 
-
         private void Awake()
         {
             PlayerRb = GetComponent<Rigidbody2D>();
@@ -28,11 +27,6 @@ namespace PlayerControl
             _speedBoostTrail.SetActive(false);
 
             EventManager.OnDamageReceived.AddListener(GetEffectFromDamage);
-        }
-
-        void Start()
-        {
-            //Time.timeScale = 0.2f;
         }
 
         void FixedUpdate()
@@ -55,20 +49,20 @@ namespace PlayerControl
                 PlayerRb.velocity = new Vector2(0, PlayerRb.velocity.y);
                 return;
             }
- 
+
             float move = horizontalInput
-                * _runSpeed 
+                * _runSpeed
                 * Time.fixedDeltaTime;
             PlayerRb.velocity = new Vector2(move, PlayerRb.velocity.y);
         }
 
         private void Jump()
         {
-            if(Mathf.Abs(PlayerRb.velocity.y) < 0.01f) 
+            if (Mathf.Abs(PlayerRb.velocity.y) < 0.01f)
                 _jumpIndex = 0;
             if (!_playerManager.IsJumpButtonPressed)
                 return;
-            if (_currentKoyoteTime < 0 && _jumpIndex  == 0)
+            if (_currentKoyoteTime < 0 && _jumpIndex == 0)
                 return;
             if (_jumpIndex > 1)
                 return;
@@ -81,14 +75,14 @@ namespace PlayerControl
         private void CheckCoyoteTime()
         {
             if (_playerManager.IsGrounded)
-                _currentKoyoteTime = _koyoteTime;                
+                _currentKoyoteTime = _koyoteTime;
             else
                 _currentKoyoteTime -= Time.deltaTime;
         }
 
         private void FallingAcceleration()
         {
-            if(PlayerRb.velocity.y < -0.01)
+            if (PlayerRb.velocity.y < -0.01)
             {
                 float acceleration = 5f * Time.deltaTime;
                 PlayerRb.velocity =
@@ -121,14 +115,5 @@ namespace PlayerControl
             await Task.Delay(damage * 10);
             _runSpeed = _defaultRunSpeed;
         }
-         
-
-#if UNITY_EDITOR
-        [ContextMenu("Default Values")]
-        public void ResetValues()
-        {
-
-        }
-#endif
     }
 }

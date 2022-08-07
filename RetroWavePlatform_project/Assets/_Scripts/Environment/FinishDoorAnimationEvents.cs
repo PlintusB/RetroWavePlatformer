@@ -21,5 +21,4 @@ public class FinishDoorAnimationEvents : MonoBehaviour
         _doorAnim.SetTrigger("OpenTheDoor");
         _finishLevelPoint.SetActive(true);
     }
-
 }
