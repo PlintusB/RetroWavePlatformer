@@ -44,6 +44,8 @@ public class GameMainManager : MonoBehaviour
 
     private void Awake()
     {
+        Time.timeScale = 1f;
+
         CurrentHealth = _maxPlayerHealth;
         _loseGameWindow.SetActive(false);
         _winLevelWindow.SetActive(false);
@@ -59,15 +61,6 @@ public class GameMainManager : MonoBehaviour
                     .AddListener(OpenLoseGameWindow);
         EventManager.OnLevelWinEnded
                     .AddListener(OpenWinLevelWindow);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            CurrentHealth -= 20;
-            CurrentScore += 7;
-        }
     }
 
     private void IncreaseCurrentHealthValue(int health) =>
