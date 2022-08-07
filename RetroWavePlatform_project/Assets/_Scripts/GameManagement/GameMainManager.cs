@@ -26,6 +26,7 @@ public class GameMainManager : MonoBehaviour
             if (value > MaxPlayerHealth) value = MaxPlayerHealth;
             _currentHealth = value;
             _UIManager.RefreshHealthBarPanel();
+            if (_currentHealth == 0) EventManager.OnPlayerDied.Invoke();
         }
     }
 
@@ -44,8 +45,12 @@ public class GameMainManager : MonoBehaviour
     {
         CurrentHealth = _maxPlayerHealth;
 
-        EventManager.OnLevelScoreChanged.AddListener(SetLevelScoreValue);
-        EventManager.OnPlayerHealthChanged.AddListener(SetCurrentHealthValue);
+        EventManager.OnLevelScoreChanged
+                    .AddListener(SetLevelScoreValue);
+        EventManager.OnPlayerHealthChanged
+                    .AddListener(IncreaseCurrentHealthValue);
+        EventManager.OnDamageReceived
+                    .AddListener(DecreaseCurrentHealthValue);
     }
 
     private void Update()
@@ -57,9 +62,12 @@ public class GameMainManager : MonoBehaviour
         }
     }
 
-    void SetCurrentHealthValue(int health) =>
+    void IncreaseCurrentHealthValue(int health) =>
         CurrentHealth += health;
 
     void SetLevelScoreValue(int value) =>
         CurrentScore += value;
+
+    void DecreaseCurrentHealthValue(int damage, Vector2 dir) =>
+        CurrentHealth -= damage;
 }

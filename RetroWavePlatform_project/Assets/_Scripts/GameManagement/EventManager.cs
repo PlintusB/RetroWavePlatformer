@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.Events;
 
 public static class EventManager
@@ -11,7 +12,8 @@ public static class EventManager
     public static UnityEvent<float> OnImmortalStatusChanged =
         new UnityEvent<float>();
 
-    public static UnityEvent<int> OnDamageDone =
-        new UnityEvent<int>();
-
+    public static UnityEvent<int, Vector2> OnDamageReceived =
+        new UnityEvent<int, Vector2>();
+    public static UnityEvent OnPlayerDied =
+        new UnityEvent();
 }

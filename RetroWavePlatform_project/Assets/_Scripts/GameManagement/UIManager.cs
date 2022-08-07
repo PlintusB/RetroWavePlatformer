@@ -29,7 +29,6 @@ public class UIManager : MonoBehaviour
     private float _currentHealth;
     private Coroutine HealthBarSmoothCoroutine;
     private float _healthBarSmoothVelocity;
-    //private float targetScore;
 
     private void Awake()
     {
@@ -55,12 +54,6 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            Invoke("RefreshHealthBarPanel", 0.1f);
-            Invoke("RefreshScorePanel", 0.1f);
-        }
-
         RefreshTimerPanel();
     }
 
@@ -130,15 +123,4 @@ public class UIManager : MonoBehaviour
             ? "0" + value.ToString()
             : value.ToString();
     }
-
-    //public void RefreshScorePanel()
-    //{
-    //    _currentScore = _gameManager.CurrentScore;
-    //    if (_currentScore < 10)
-    //        _scorePanelText.text = "00" + _currentScore.ToString();
-    //    else if (_currentScore < 100)
-    //        _scorePanelText.text = "0" + _currentScore.ToString();
-    //    else _scorePanelText.text = _currentScore.ToString();
-    //}
-
 }

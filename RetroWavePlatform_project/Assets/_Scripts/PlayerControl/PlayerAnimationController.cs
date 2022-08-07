@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace PlayerControl
@@ -7,10 +8,14 @@ namespace PlayerControl
     {
         [SerializeField] private PlayerManager _playerMan;
         private Animator _animator;
+        private bool _isHurt;
 
         void Awake()
         {
-            _animator = GetComponent<Animator>();            
+            _animator = GetComponent<Animator>();
+            _isHurt = false;
+            EventManager.OnDamageReceived.AddListener(ReceiveDamage);
+
         }
 
         void Update()
@@ -18,8 +23,7 @@ namespace PlayerControl
             _animator.SetBool("IsGrounded", _playerMan.IsGrounded);
             _animator.SetInteger("X_move", Mathf.Abs(_playerMan.XMoveInput));
             _animator.SetFloat("Y_move", _playerMan.VerticalVelocity);
-            if (false) _animator.SetTrigger("StartHurt");
-            if (false) _animator.SetTrigger("FinishHurt");
+            _animator.SetBool("Hurt", _isHurt);
 
             FlipX();
         }
@@ -30,6 +34,13 @@ namespace PlayerControl
                 transform.localScale = new Vector2(1, 1);
             if (_playerMan.XMoveInput < 0 && transform.localScale.x == 1f)
                 transform.localScale = new Vector2(-1, 1);
+        }
+
+        private async void ReceiveDamage(int damage, Vector2 dir)
+        {
+            _isHurt = true;
+            await Task.Delay(damage * 10);
+            _isHurt = false;
         }
     }
 }

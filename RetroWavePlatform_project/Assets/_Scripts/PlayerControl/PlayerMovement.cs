@@ -7,6 +7,7 @@ namespace PlayerControl
     {
         [SerializeField] private PlayerManager _playerManager;
         [SerializeField] private float _runSpeed;
+        private float _defaultRunSpeed;
         [SerializeField] private GameObject _speedBoostTrail;
 
         public Rigidbody2D PlayerRb { get; private set; }
@@ -21,9 +22,12 @@ namespace PlayerControl
         {
             PlayerRb = GetComponent<Rigidbody2D>();
             _jumpIndex = 0;
+            _defaultRunSpeed = _runSpeed;
 
             EventManager.OnPlayerSpeedChanged.AddListener(GetEffectFromSpeedBonus);
             _speedBoostTrail.SetActive(false);
+
+            EventManager.OnDamageReceived.AddListener(GetEffectFromDamage);
         }
 
         void Start()
@@ -33,6 +37,7 @@ namespace PlayerControl
 
         void FixedUpdate()
         {
+            if (_runSpeed == 0) return;
             Run(_playerManager.XMoveInput);
         }
 
@@ -41,7 +46,6 @@ namespace PlayerControl
             Jump();
             CheckCoyoteTime();
             Falling();
-
         }
 
         private void Run(float horizontalInput)
@@ -95,13 +99,29 @@ namespace PlayerControl
 
         private async void GetEffectFromSpeedBonus(float time, float delta)
         {
-            _runSpeed *= delta;
+            _defaultRunSpeed *= delta;
+            _runSpeed = _defaultRunSpeed;
             _speedBoostTrail.SetActive(true);
             await Task.Delay(Mathf.RoundToInt(time * 1000f));
-            _runSpeed /= delta;
+            _defaultRunSpeed /= delta;
+            _runSpeed = _defaultRunSpeed;
             _speedBoostTrail.SetActive(false);
         }
 
+        private async void GetEffectFromDamage(int damage, Vector2 damageDirection)
+        {
+            _runSpeed = 0;
+            PlayerRb.velocity = Vector3.zero;
+
+            PlayerRb.velocity =
+                damageDirection.x <= 0
+                ? Vector3.up * 2f - transform.right
+                : Vector3.up * 2f + transform.right;
+
+            await Task.Delay(damage * 10);
+            _runSpeed = _defaultRunSpeed;
+        }
+         
 
 #if UNITY_EDITOR
         [ContextMenu("Default Values")]
